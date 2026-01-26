@@ -59,7 +59,7 @@ with tempfile.TemporaryDirectory() as git:
     for tag in subprocess.check_output([GIT, 'tag', '--list', '--sort', '-v:refname'], encoding='utf-8').split('\n'):
         for tag_prefix in ANOPE_TAGS:
             if tag.startswith(tag_prefix):
-                versions = re.match(r'^v((((\d+)\.\d+)\.\d+).*)', tag)
+                versions = re.match(r'^((((\d+)\.\d+)\.\d+).*)', tag)
                 if not versions:
                     continue
                 if not tag in references:
@@ -72,6 +72,10 @@ with tempfile.TemporaryDirectory() as git:
         print(f"Preparing to build API docs for {CC_BOLD}{reference}{CC_RESET} ...")
         if os.system(f"{GIT} clean -dfx && {GIT} reset --hard && {GIT} checkout {reference}"):
             sys.exit(1)
+
+        if not os.path.exists("docs/Doxyfile"):
+            print(f"Skipping API docs for {CC_BOLD}{reference}{CC_RESET} as it lacks a Doxyfile!")
+            continue
 
         print(f"Building API docs for {CC_BOLD}{reference}{CC_RESET} ...")
         with open("docs/Doxyfile", "a") as fh:
