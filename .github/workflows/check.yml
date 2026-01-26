@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/master'
     env:
-      INSPIRCD_BRANCHES: insp3 insp4 master
-      INSPIRCD_TAGS: v3 v4
+      ANOPE_BRANCHES: 2.0 2.1
+      ANOPE_TAGS: 2.1
     steps:
       - uses: actions/checkout@v6
 
