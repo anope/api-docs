@@ -64,7 +64,7 @@ with tempfile.TemporaryDirectory() as git:
     for tag_prefix in sorted(ANOPE_TAGS, reverse=True):
         for tag in tags:
             if tag.startswith(tag_prefix):
-                versions = re.match(r'^((((\d+)\.\d+)\.\d+).*)', tag)
+                versions = re.match(r'^(((\d+\.\d+)\.\d+).*)', tag)
                 if not versions:
                     continue
                 if tag not in references:
