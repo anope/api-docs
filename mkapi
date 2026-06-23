@@ -17,14 +17,14 @@ CC_BOLD  = "\x1B[1m"    if sys.stdout.isatty() else ''
 CC_RED   = "\x1B[1;31m" if sys.stdout.isatty() else ''
 CC_RESET = "\x1B[0m"    if sys.stdout.isatty() else ''
 
-# ANOPE_BRANCHES contains a space-delimited list of git branch names.
-ANOPE_BRANCHES = os.getenv('ANOPE_BRANCHES', '2.1').split()
+# MKAPI_BRANCHES contains a space-delimited list of git branch names.
+MKAPI_BRANCHES = os.getenv('MKAPI_BRANCHES', '2.1').split()
 
-# ANOPE_REPOSITORY contains the location of the Anope git repository.
-ANOPE_REPOSITORY = os.getenv('ANOPE_REPOSITORY', 'https://github.com/anope/anope.git')
+# MKAPI_REPOSITORY contains the location of the git repository.
+MKAPI_REPOSITORY = os.getenv('MKAPI_REPOSITORY', 'https://github.com/anope/anope.git')
 
-# ANOPE_TAGS contains a space-delimited list of git tag prefixes.
-ANOPE_TAGS = os.getenv('ANOPE_TAGS', '').split()
+# MKAPI_TAGS contains a space-delimited list of git tag prefixes.
+MKAPI_TAGS = os.getenv('MKAPI_TAGS', '').split()
 
 def error(message):
     print(f"{CC_RED}Error:{CC_RESET} {message}!", file=sys.stderr)
@@ -51,17 +51,17 @@ for type in "branch tag".split():
 
 docs = {}
 with tempfile.TemporaryDirectory() as git:
-    print(f"Cloning {CC_BOLD}{ANOPE_REPOSITORY}{CC_RESET} to {git} ...")
-    if subprocess.call([GIT, 'clone', ANOPE_REPOSITORY, git]):
+    print(f"Cloning {CC_BOLD}{MKAPI_REPOSITORY}{CC_RESET} to {git} ...")
+    if subprocess.call([GIT, 'clone', MKAPI_REPOSITORY, git]):
         sys.exit(1)
     os.chdir(git)
 
     # Build the list of refs to build docs for.
     references = {}
-    for branch in sorted(ANOPE_BRANCHES, reverse=True):
+    for branch in sorted(MKAPI_BRANCHES, reverse=True):
         references[branch] = {branch: f"branch/{branch}"}
     tags = subprocess.check_output([GIT, 'tag', '--list', '--sort', '-creatordate'], encoding='utf-8').splitlines()
-    for tag_prefix in sorted(ANOPE_TAGS, reverse=True):
+    for tag_prefix in sorted(MKAPI_TAGS, reverse=True):
         for tag in tags:
             if tag.startswith(tag_prefix):
                 versions = re.match(r'^(((\d+\.\d+)\.\d+).*)', tag)

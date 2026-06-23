@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/master'
     env:
-      ANOPE_BRANCHES: 2.0 2.1
-      ANOPE_TAGS: 2.0 2.1
+      MKAPI_BRANCHES: 2.0 2.1
+      MKAPI_TAGS: 2.0 2.1
     steps:
       - uses: actions/checkout@v6
 
