@@ -54,15 +54,16 @@ with tempfile.TemporaryDirectory() as git:
 
     # Build the list of refs to build docs for.
     references = {}
-    for branch in ANOPE_BRANCHES:
+    for branch in sorted(ANOPE_BRANCHES, reverse=True):
         references[branch] = [branch]
-    for tag in subprocess.check_output([GIT, 'tag', '--list', '--sort', '-v:refname'], encoding='utf-8').split('\n'):
-        for tag_prefix in ANOPE_TAGS:
+    tags = subprocess.check_output([GIT, 'tag', '--list', '--sort', '-creatordate'], encoding='utf-8').splitlines()
+    for tag_prefix in sorted(ANOPE_TAGS, reverse=True):
+        for tag in tags:
             if tag.startswith(tag_prefix):
                 versions = re.match(r'^((((\d+)\.\d+)\.\d+).*)', tag)
                 if not versions:
                     continue
-                if not tag in references:
+                if tag not in references:
                     references[tag] = []
                 for version in versions.groups():
                     references[tag].append(version)
@@ -89,14 +90,16 @@ with tempfile.TemporaryDirectory() as git:
                 continue
             print(f"Copying API docs from {CC_BOLD}{DOXYGEN_DIR}{CC_RESET} to {CC_BOLD}{site_dir}{CC_RESET} ...")
             shutil.copytree(DOXYGEN_DIR, site_dir)
-            if not reference in docs:
+            if reference not in docs:
                 docs[reference] = []
             docs[reference].append(directory)
 
-env = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
-template = env.get_template("index.html.j2")
-with open(os.path.join(SITE_DIR, "index.html"), "w") as fh:
-    fh.write(template.render(
-        docs=docs,
-        time=datetime.datetime.now()
-    ))
+env = jinja2.Environment(loader=jinja2.FileSystemLoader(SITE_DIR))
+for file in os.listdir(SITE_DIR):
+    if file.endswith(".j2"):
+        template = env.get_template(file)
+        with open(os.path.join(SITE_DIR, file.removesuffix(".j2")), "w") as fh:
+            fh.write(template.render(
+                docs=docs,
+                time=datetime.datetime.now()
+            ))
