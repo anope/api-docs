@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ANOPE_BRANCHES: 2.0 2.1
-      ANOPE_TAGS: 2.1
+      ANOPE_TAGS: 2.0 2.1
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
